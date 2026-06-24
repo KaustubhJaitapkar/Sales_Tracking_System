@@ -65,7 +65,7 @@ public class LeadService {
     public Lead addLead(Lead lead) {
 
         if (lead.getPriority() == null) {
-            lead.setPriority(LeadPriority.MEDIUM);
+            lead.setPriority(LeadPriority.Medium);
         }
 
         if (lead.getValue() == null) {
@@ -309,7 +309,7 @@ public class LeadService {
             Integer leadId
     ) {
         return leadAssignmentRepository
-                .findByLeadLeadId(leadId);
+                .findByLeadLeadIdOrderByAssignedAtDesc(leadId);
     }
 
     /**
