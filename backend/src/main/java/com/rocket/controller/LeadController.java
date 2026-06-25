@@ -2,121 +2,270 @@ package com.rocket.controller;
 
 import com.rocket.entity.Lead;
 import com.rocket.entity.LeadAssignment;
+import com.rocket.entity.LeadPriority;
 import com.rocket.service.LeadService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/leads")
 public class LeadController {
-    
+
     @Autowired
     private LeadService leadService;
-    
-    // Add a new lead
+
+    /**
+     * Create Lead
+     */
     @PostMapping
-    public ResponseEntity<Lead> addLead(@RequestBody Lead lead) {
-        Lead savedLead = leadService.addLead(lead);
-        return new ResponseEntity<>(savedLead, HttpStatus.CREATED);
+    public ResponseEntity<Lead> addLead(
+            @RequestBody Lead lead) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(leadService.addLead(lead));
     }
-    
-    // Update an existing lead
-    @PutMapping("/{id}")
-    public ResponseEntity<Lead> updateLead(@PathVariable Integer id, @RequestBody Lead leadDetails) {
-        Lead updatedLead = leadService.updateLead(id, leadDetails);
-        if (updatedLead != null) {
-            return new ResponseEntity<>(updatedLead, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    /**
+     * Update Lead
+     */
+    @PutMapping("/{leadId}")
+    public ResponseEntity<Lead> updateLead(
+            @PathVariable Integer leadId,
+            @RequestBody Lead leadDetails) {
+
+        return ResponseEntity.ok(
+                leadService.updateLead(
+                        leadId,
+                        leadDetails
+                )
+        );
     }
-    
-    // Delete a lead
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLead(@PathVariable Integer id) {
-        boolean deleted = leadService.deleteLead(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    /**
+     * Delete Lead
+     */
+    @DeleteMapping("/{leadId}")
+    public ResponseEntity<String> deleteLead(
+            @PathVariable Integer leadId) {
+
+        leadService.deleteLead(leadId);
+
+        return ResponseEntity.ok(
+                "Lead deleted successfully."
+        );
     }
-    
-    // Get lead by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Lead> getLeadById(@PathVariable Integer id) {
-        Optional<Lead> lead = leadService.getLeadById(id);
-        return lead.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+    /**
+     * Get Lead By Id
+     */
+    @GetMapping("/{leadId}")
+    public ResponseEntity<Lead> getLeadById(
+            @PathVariable Integer leadId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadById(leadId)
+        );
     }
-    
-    // Get all leads
+
+    /**
+     * Get All Leads
+     */
     @GetMapping
     public ResponseEntity<List<Lead>> getAllLeads() {
-        List<Lead> leads = leadService.getAllLeads();
-        return new ResponseEntity<>(leads, HttpStatus.OK);
+
+        return ResponseEntity.ok(
+                leadService.getAllLeads()
+        );
     }
-    
-    // Get leads by product
+
+    /**
+     * Get Leads By Product
+     */
     @GetMapping("/product/{productId}")
-    public ResponseEntity<List<Lead>> getLeadsByProduct(@PathVariable Integer productId) {
-        List<Lead> leads = leadService.getLeadsByProduct(productId);
-        return new ResponseEntity<>(leads, HttpStatus.OK);
+    public ResponseEntity<List<Lead>> getLeadsByProduct(
+            @PathVariable Integer productId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsByProduct(productId)
+        );
     }
-    
-    // Get leads by source
+
+    /**
+     * Get Leads By Source
+     */
     @GetMapping("/source/{sourceId}")
-    public ResponseEntity<List<Lead>> getLeadsBySource(@PathVariable Integer sourceId) {
-        List<Lead> leads = leadService.getLeadsBySource(sourceId);
-        return new ResponseEntity<>(leads, HttpStatus.OK);
+    public ResponseEntity<List<Lead>> getLeadsBySource(
+            @PathVariable Integer sourceId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsBySource(sourceId)
+        );
     }
-    
-    // Get leads by status
+
+    /**
+     * Get Leads By Status
+     */
     @GetMapping("/status/{statusId}")
-    public ResponseEntity<List<Lead>> getLeadsByStatus(@PathVariable Integer statusId) {
-        List<Lead> leads = leadService.getLeadsByStatus(statusId);
-        return new ResponseEntity<>(leads, HttpStatus.OK);
+    public ResponseEntity<List<Lead>> getLeadsByStatus(
+            @PathVariable Integer statusId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsByStatus(statusId)
+        );
     }
-    
-    // Assign a lead to an employee
-    @PostMapping("/{leadId}/assign/{employeeId}")
-    public ResponseEntity<LeadAssignment> assignLead(@PathVariable Integer leadId, 
-                                                      @PathVariable Integer employeeId,
-                                                      @RequestParam Integer assignedByEmployeeId,
-                                                      @RequestParam(required = false) String remarks) {
-        LeadAssignment assignment = leadService.assignLead(leadId, employeeId, assignedByEmployeeId, remarks);
-        if (assignment != null) {
-            return new ResponseEntity<>(assignment, HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    /**
+     * Get Leads By Priority
+     */
+    @GetMapping("/priority/{priority}")
+    public ResponseEntity<List<Lead>> getLeadsByPriority(
+            @PathVariable LeadPriority priority) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsByPriority(priority)
+        );
     }
-    
-    // Reassign a lead to another employee (manager function)
-    @PostMapping("/{leadId}/reassign/{newEmployeeId}")
-    public ResponseEntity<LeadAssignment> reassignLead(@PathVariable Integer leadId, 
-                                                        @PathVariable Integer newEmployeeId,
-                                                        @RequestParam Integer managerEmployeeId,
-                                                        @RequestParam(required = false) String remarks) {
-        LeadAssignment assignment = leadService.reassignLead(leadId, newEmployeeId, managerEmployeeId, remarks);
-        if (assignment != null) {
-            return new ResponseEntity<>(assignment, HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    
-    // Get leads assigned to an employee
+
+    /**
+     * Get Leads Assigned To Employee
+     */
     @GetMapping("/assigned-to/{employeeId}")
-    public ResponseEntity<List<Lead>> getLeadsAssignedToEmployee(@PathVariable Integer employeeId) {
-        List<Lead> leads = leadService.getLeadsAssignedToEmployee(employeeId);
-        return new ResponseEntity<>(leads, HttpStatus.OK);
+    public ResponseEntity<List<Lead>> getLeadsAssignedToEmployee(
+            @PathVariable Integer employeeId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsAssignedToEmployee(employeeId)
+        );
     }
-    
-    // Get assignment history for a lead
+
+    /**
+     * Get Leads Created By Employee
+     */
+    @GetMapping("/created-by/{employeeId}")
+    public ResponseEntity<List<Lead>> getLeadsCreatedByEmployee(
+            @PathVariable Integer employeeId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsCreatedByEmployee(employeeId)
+        );
+    }
+
+    /**
+     * Get Customer Leads
+     */
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<Lead>> getLeadsByCustomer(
+            @PathVariable Integer customerId) {
+
+        return ResponseEntity.ok(
+                leadService.getLeadsByCustomer(customerId)
+        );
+    }
+
+    /**
+     * Get Unassigned Leads
+     */
+    @GetMapping("/unassigned")
+    public ResponseEntity<List<Lead>> getUnassignedLeads() {
+
+        return ResponseEntity.ok(
+                leadService.getUnassignedLeads()
+        );
+    }
+
+    /**
+     * Get Assigned Leads
+     */
+    @GetMapping("/assigned")
+    public ResponseEntity<List<Lead>> getAssignedLeads() {
+
+        return ResponseEntity.ok(
+                leadService.getAssignedLeads()
+        );
+    }
+
+    /**
+     * Get High Value Leads
+     */
+    @GetMapping("/high-value/{value}")
+    public ResponseEntity<List<Lead>> getHighValueLeads(
+            @PathVariable Integer value) {
+
+        return ResponseEntity.ok(
+                leadService.getHighValueLeads(value)
+        );
+    }
+
+    /**
+     * Assign Lead
+     */
+    @PostMapping("/{leadId}/assign/{employeeId}")
+    public ResponseEntity<LeadAssignment> assignLead(
+            @PathVariable Integer leadId,
+            @PathVariable Integer employeeId,
+            @RequestParam Integer assignedByEmployeeId,
+            @RequestParam(required = false) String remarks) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        leadService.assignLead(
+                                leadId,
+                                employeeId,
+                                assignedByEmployeeId,
+                                remarks
+                        )
+                );
+    }
+
+    /**
+     * Reassign Lead
+     */
+    @PostMapping("/{leadId}/reassign/{employeeId}")
+    public ResponseEntity<LeadAssignment> reassignLead(
+            @PathVariable Integer leadId,
+            @PathVariable Integer employeeId,
+            @RequestParam Integer managerEmployeeId,
+            @RequestParam(required = false) String remarks) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        leadService.reassignLead(
+                                leadId,
+                                employeeId,
+                                managerEmployeeId,
+                                remarks
+                        )
+                );
+    }
+
+    /**
+     * Assignment History
+     */
     @GetMapping("/{leadId}/assignment-history")
-    public ResponseEntity<List<LeadAssignment>> getAssignmentHistory(@PathVariable Integer leadId) {
-        List<LeadAssignment> history = leadService.getAssignmentHistory(leadId);
-        return new ResponseEntity<>(history, HttpStatus.OK);
+    public ResponseEntity<List<LeadAssignment>> getAssignmentHistory(
+            @PathVariable Integer leadId) {
+
+        return ResponseEntity.ok(
+                leadService.getAssignmentHistory(leadId)
+        );
+    }
+
+    /**
+     * Debug Endpoint
+     */
+    @GetMapping("/debug/print")
+    public ResponseEntity<String> printAllLeads() {
+
+        leadService.printAllLeads();
+
+        return ResponseEntity.ok(
+                "Lead data printed in console."
+        );
     }
 }
