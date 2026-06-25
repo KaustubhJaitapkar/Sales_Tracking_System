@@ -2,7 +2,7 @@ package com.rocket.service;
 
 import com.rocket.entity.Employee;
 import com.rocket.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -10,8 +10,11 @@ import java.util.Optional;
 @Service
 public class EmployeeService {
     
-    @Autowired
     private EmployeeRepository employeeRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository){
+        this.employeeRepository = employeeRepository;
+    }
     
     // Add a new employee
     public Employee addEmployee(Employee employee) {
@@ -46,7 +49,7 @@ public class EmployeeService {
             }
             return employeeRepository.save(employee);
         }
-        return null;
+        throw new RuntimeException("Employee not found with id: " + employeeId);
     }
     
     // Delete an employee
@@ -55,7 +58,7 @@ public class EmployeeService {
             employeeRepository.deleteById(employeeId);
             return true;
         }
-        return false;
+        throw new RuntimeException("Employee not found with id: " + employeeId);
     }
     
     // Get employee by ID
@@ -67,9 +70,39 @@ public class EmployeeService {
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
+
+    public List<Employee> getEmployeesByFirstNameIgnoreCase(String firstName) {
+        return employeeRepository.findByFirstNameIgnoreCase(firstName);
+    }
+
+    public List<Employee> getEmployeesByLastNameIgnoreCase(String lastName) {
+        return employeeRepository.findByLastNameIgnoreCase(lastName);
+    }
+
+    public List<Employee> getEmployeesByCityIgnoreCase(String city) {
+        return employeeRepository.findByCityIgnoreCase(city);
+    }
+
+    public List<Employee> getEmployeesByTitleIgnoreCase(String title) {
+        return employeeRepository.findByTitleIgnoreCase(title);
+    }
+
+    public List<Employee> getEmployeesByCountryIgnoreCase(String country) {
+        return employeeRepository.findByCountryIgnoreCase(country);
+    }
     
     // Get employee by email
-    public Optional<Employee> getEmployeeByEmail(String email) {
-        return employeeRepository.findByEmail(email);
+    public Optional<Employee> getEmployeeByEmailIgnoreCase(String email) {
+        return employeeRepository.findByEmailIgnoreCase(email);
+    }
+
+    public List<Employee> searchEmployees(String firstName, String lastName, String city, String title, String country) {
+        return employeeRepository.findAll().stream()
+                .filter(e -> firstName == null || e.getFirstName().equalsIgnoreCase(firstName))
+                .filter(e -> lastName == null || e.getLastName().equalsIgnoreCase(lastName))
+                .filter(e -> city == null || e.getCity().equalsIgnoreCase(city))
+                .filter(e -> title == null || e.getTitle().equalsIgnoreCase(title))
+                .filter(e -> country == null || e.getCountry().equalsIgnoreCase(country))
+                .toList();
     }
 }

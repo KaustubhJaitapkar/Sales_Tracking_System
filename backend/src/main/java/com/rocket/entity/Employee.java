@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
-@Table(name = "Employee")
+@Table(name = "employee")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,19 +17,19 @@ import java.util.List;
 public class Employee {
     
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Column(name = "first_name", length = 50)
+    @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
     
     @Column(name = "last_name", length = 50)
     private String lastName;
     
-    @Column(name = "title", length = 11)
+    @Column(name = "title", length = 50)
     private String title;
     
-    @Column(name = "email", length = 50)
+    @Column(name = "email", length = 50, unique = true)
     private String email;
     
     @Column(name = "country", length = 50)
@@ -43,21 +43,22 @@ public class Employee {
     private Locations location;
     
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private UserAccount userAccount;
     
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "createdBy")
     @JsonIgnore
     private List<Lead> createdLeads;
     
-    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "assignedTo")
     @JsonIgnore
     private List<Lead> assignedLeads;
     
-    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "assignedTo")
     @JsonIgnore
     private List<LeadAssignment> assignedAssignments;
     
-    @OneToMany(mappedBy = "assignedBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "assignedBy")
     @JsonIgnore
     private List<LeadAssignment> createdAssignments;
 }

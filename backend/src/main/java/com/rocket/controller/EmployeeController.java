@@ -2,67 +2,104 @@ package com.rocket.controller;
 
 import com.rocket.entity.Employee;
 import com.rocket.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/employees")
+@RequestMapping("/employees")
 public class EmployeeController {
-    
-    @Autowired
-    private EmployeeService employeeService;
-    
-    // Add a new employee
+
+    private final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    //Create employee
     @PostMapping
-    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
-        Employee savedEmployee = employeeService.addEmployee(employee);
-        return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
+    public Employee addEmployee(@RequestBody Employee employee) {
+        return employeeService.addEmployee(employee);
     }
-    
-    // Update an employee
-    @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Integer id, @RequestBody Employee employeeDetails) {
-        Employee updatedEmployee = employeeService.updateEmployee(id, employeeDetails);
-        if (updatedEmployee != null) {
-            return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    
-    // Delete an employee
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Integer id) {
-        boolean deleted = employeeService.deleteEmployee(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    
-    // Get employee by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Integer id) {
-        Optional<Employee> employee = employeeService.getEmployeeById(id);
-        return employee.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                       .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-    
-    // Get all employees
+
+    //Get all employees
     @GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        List<Employee> employees = employeeService.getAllEmployees();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
     }
-    
-    // Get employee by email
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Employee> getEmployeeByEmail(@PathVariable String email) {
-        Optional<Employee> employee = employeeService.getEmployeeByEmail(email);
-        return employee.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                       .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+    //Get employee by ID
+    @GetMapping("/{id}")
+    public Optional<Employee> getEmployeeById(@PathVariable Integer id) {
+        return employeeService.getEmployeeById(id);
+    }
+
+    //Update employee
+    @PutMapping("/{id}")
+    public Employee updateEmployee(@PathVariable Integer id,
+                                   @RequestBody Employee employeeDetails) {
+        return employeeService.updateEmployee(id, employeeDetails);
+    }
+
+    //Delete employee
+    @DeleteMapping("/{id}")
+    public String deleteEmployee(@PathVariable Integer id) {
+        employeeService.deleteEmployee(id);
+        return "Employee deleted successfully";
+    }
+
+    //Search by first name
+    @GetMapping("/search/firstName/{firstName}")
+    public List<Employee> getByFirstName(@PathVariable String firstName) {
+        return employeeService.getEmployeesByFirstNameIgnoreCase(firstName);
+    }
+
+    //Search by last name
+    @GetMapping("/search/lastName/{lastName}")
+    public List<Employee> getByLastName(@PathVariable String lastName) {
+        return employeeService.getEmployeesByLastNameIgnoreCase(lastName);
+    }
+
+    //Search by city
+    @GetMapping("/search/city/{city}")
+    public List<Employee> getByCity(@PathVariable String city) {
+        return employeeService.getEmployeesByCityIgnoreCase(city);
+    }
+
+    //Search by title
+    @GetMapping("/search/title/{title}")
+    public List<Employee> getByTitle(@PathVariable String title) {
+        return employeeService.getEmployeesByTitleIgnoreCase(title);
+    }
+
+    //Search by country
+    @GetMapping("/search/country/{country}")
+    public List<Employee> getByCountry(@PathVariable String country) {
+        return employeeService.getEmployeesByCountryIgnoreCase(country);
+    }
+
+    //Search by email
+    @GetMapping("/search/email/{email}")
+    public Optional<Employee> getByEmail(@PathVariable String email) {
+        return employeeService.getEmployeeByEmailIgnoreCase(email);
+    }
+
+    @Autowired
+    private LeadService leadService;
+    @GetMapping("/{id}/leads")
+    public List<Lead> getLeadsByEmployee(@PathVariable int id){
+        return leadService.getLeadsByEmployee(id);
+    }
+
+    @GetMapping("/search")
+    public List<Employee> searchEmployees(
+        @RequestParam(required = false) String firstName,
+        @RequestParam(required = false) String lastName,
+        @RequestParam(required = false) String city,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String country
+    ) {
+        return employeeService.searchEmployees(firstName, lastName, city, title, country);
     }
 }
