@@ -20,7 +20,11 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.addCustomer(customer);
-        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+
+        if (savedCustomer != null) {
+            return new ResponseEntity<>(savedCustomer, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
     // Update a customer

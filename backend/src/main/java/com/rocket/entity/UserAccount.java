@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 public class UserAccount {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer userId;
     
@@ -27,6 +29,7 @@ public class UserAccount {
     private String username;
     
     @Column(name = "password_hash", length = 255, nullable = false)
+    @JsonIgnore
     private String passwordHash;
     
     @Column(name = "account_status", length = 20, nullable = false)

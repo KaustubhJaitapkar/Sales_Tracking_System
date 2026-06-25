@@ -17,6 +17,7 @@ import java.util.List;
 public class Locations {
     
     @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     
@@ -32,7 +33,7 @@ public class Locations {
     @Column(name = "city", length = 50)
     private String city;
     
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "location")
     @JsonIgnore
     private List<Employee> employees;
 }

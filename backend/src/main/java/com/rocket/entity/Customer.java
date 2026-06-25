@@ -1,6 +1,7 @@
 package com.rocket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 public class Customer {
     
     @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
     private Integer customerId;
     
@@ -27,6 +29,7 @@ public class Customer {
     private String lastName;
     
     @Column(name = "email", length = 100, nullable = false, unique = true)
+    @Email
     private String email;
     
     @Column(name = "phone_no", length = 15, nullable = false, unique = true)
@@ -35,7 +38,7 @@ public class Customer {
     @Column(name = "organization_name", length = 50)
     private String organizationName;
     
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer")
     @JsonIgnore
     private List<Lead> leads;
 }

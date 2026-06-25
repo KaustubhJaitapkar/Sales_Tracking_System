@@ -17,6 +17,7 @@ import java.util.List;
 public class ProductDetails {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private Integer productId;
     
@@ -32,7 +33,7 @@ public class ProductDetails {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product")
     @JsonIgnore
     private List<Lead> leads;
 }
