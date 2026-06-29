@@ -1,1 +1,7 @@
 .idea
+logs/
+*.log
+*.log.gz
+target/
+.DS_Store
+*.iml
