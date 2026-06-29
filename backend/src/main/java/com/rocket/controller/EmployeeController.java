@@ -1,7 +1,11 @@
 package com.rocket.controller;
 
 import com.rocket.entity.Employee;
+import com.rocket.entity.Lead;
 import com.rocket.service.EmployeeService;
+import com.rocket.service.LeadService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +16,11 @@ import java.util.Optional;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final LeadService leadService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, LeadService leadService) {
         this.employeeService = employeeService;
+        this.leadService = leadService;
     }
 
     //Create employee
@@ -85,8 +91,6 @@ public class EmployeeController {
         return employeeService.getEmployeeByEmailIgnoreCase(email);
     }
 
-    @Autowired
-    private LeadService leadService;
     @GetMapping("/{id}/leads")
     public List<Lead> getLeadsByEmployee(@PathVariable int id){
         return leadService.getLeadsByEmployee(id);

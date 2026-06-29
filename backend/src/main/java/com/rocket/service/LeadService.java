@@ -23,7 +23,7 @@ public class LeadService {
     
     @Autowired
     private EmployeeRepository employeeRepository;
-    
+
     // Add a new lead
     public Lead addLead(Lead lead) {
         lead.setCreatedAt(LocalDateTime.now());
@@ -144,5 +144,9 @@ public class LeadService {
     // Get assignment history for a lead
     public List<LeadAssignment> getAssignmentHistory(Integer leadId) {
         return leadAssignmentRepository.findByLeadLeadId(leadId);
+    }
+
+    public List<Lead> getLeadsByEmployee(int employeeId) {
+        return leadRepository.findByAssignedToId(employeeId);
     }
 }

@@ -1,6 +1,7 @@
 package com.rocket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ public class Employee {
     private String title;
     
     @Column(name = "email", length = 50, unique = true)
+    @Email
     private String email;
     
     @Column(name = "country", length = 50)
