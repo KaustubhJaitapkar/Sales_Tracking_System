@@ -33,6 +33,9 @@ public class ProductDetails {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private Boolean isActive = true;
+    
     @OneToMany(mappedBy = "product")
     @JsonIgnore
     private List<Lead> leads;

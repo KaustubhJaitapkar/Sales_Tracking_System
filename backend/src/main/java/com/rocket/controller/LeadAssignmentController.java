@@ -1,37 +1,31 @@
 package com.rocket.controller;
 
-import com.rocket.entity.LeadAssignment;
-import com.rocket.service.LeadAssignmentService;
-
+import com.rocket.dto.LeadAssignmentDTO;
+import com.rocket.service.ILeadAssignmentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/lead-assignments")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class LeadAssignmentController {
 
-    private final LeadAssignmentService leadAssignmentService;
-
-    public LeadAssignmentController(
-            LeadAssignmentService leadAssignmentService) {
-
-        this.leadAssignmentService = leadAssignmentService;
-    }
+    private final ILeadAssignmentService leadAssignmentService;
 
     /**
      * Assign Lead
      */
     @PostMapping("/assign")
-    public ResponseEntity<LeadAssignment> assignLead(
+    public ResponseEntity<LeadAssignmentDTO> assignLead(
             @RequestParam Integer leadId,
             @RequestParam Integer assignedToId,
             @RequestParam Integer assignedById,
             @RequestParam(required = false) String remarks) {
 
-        LeadAssignment assignment =
+        LeadAssignmentDTO assignment =
                 leadAssignmentService.assignLead(
                         leadId,
                         assignedToId,
@@ -45,13 +39,13 @@ public class LeadAssignmentController {
      * Reassign Lead
      */
     @PostMapping("/reassign")
-    public ResponseEntity<LeadAssignment> reassignLead(
+    public ResponseEntity<LeadAssignmentDTO> reassignLead(
             @RequestParam Integer leadId,
             @RequestParam Integer assignedToId,
             @RequestParam Integer assignedById,
             @RequestParam(required = false) String remarks) {
 
-        LeadAssignment assignment =
+        LeadAssignmentDTO assignment =
                 leadAssignmentService.reassignLead(
                         leadId,
                         assignedToId,
@@ -65,7 +59,7 @@ public class LeadAssignmentController {
      * Assignment History of Lead
      */
     @GetMapping("/lead/{leadId}")
-    public ResponseEntity<List<LeadAssignment>> getLeadAssignmentHistory(
+    public ResponseEntity<List<LeadAssignmentDTO>> getLeadAssignmentHistory(
             @PathVariable Integer leadId) {
 
         return ResponseEntity.ok(
@@ -76,7 +70,7 @@ public class LeadAssignmentController {
      * Current Assignment of Lead
      */
     @GetMapping("/lead/{leadId}/current")
-    public ResponseEntity<LeadAssignment> getCurrentAssignment(
+    public ResponseEntity<LeadAssignmentDTO> getCurrentAssignment(
             @PathVariable Integer leadId) {
 
         return ResponseEntity.ok(
@@ -87,7 +81,7 @@ public class LeadAssignmentController {
      * Assignments Received by Employee
      */
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<LeadAssignment>> getAssignmentsByEmployee(
+    public ResponseEntity<List<LeadAssignmentDTO>> getAssignmentsByEmployee(
             @PathVariable Integer employeeId) {
 
         return ResponseEntity.ok(
@@ -98,7 +92,7 @@ public class LeadAssignmentController {
      * Assignments Made By Manager
      */
     @GetMapping("/manager/{managerId}")
-    public ResponseEntity<List<LeadAssignment>> getAssignmentsByManager(
+    public ResponseEntity<List<LeadAssignmentDTO>> getAssignmentsByManager(
             @PathVariable Integer managerId) {
 
         return ResponseEntity.ok(

@@ -44,6 +44,9 @@ public class LeadAssignment {
     @Column(name = "remarks", columnDefinition = "TEXT")
     private String remarks;
 
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private Boolean isActive = true;
+
     @PrePersist
     public void prePersist() {
         if (assignedAt == null) {

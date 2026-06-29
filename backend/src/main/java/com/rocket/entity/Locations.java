@@ -17,7 +17,7 @@ import java.util.List;
 public class Locations {
     
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
     
@@ -32,6 +32,9 @@ public class Locations {
     
     @Column(name = "city", length = 50)
     private String city;
+    
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private Boolean isActive = true;
     
     @OneToMany(mappedBy = "location")
     @JsonIgnore

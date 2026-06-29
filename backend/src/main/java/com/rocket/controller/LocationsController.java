@@ -1,8 +1,8 @@
 package com.rocket.controller;
 
-import com.rocket.entity.Locations;
-import com.rocket.service.LocationsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rocket.dto.LocationsDTO;
+import com.rocket.service.ILocationsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,15 +11,15 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/locations")
+@RequiredArgsConstructor
 public class LocationsController {
     
-    @Autowired
-    private LocationsService locationsService;
+    private final ILocationsService locationsService;
     
     @PostMapping
-    public ResponseEntity<Locations> addLocation(@RequestBody Locations location) {
+    public ResponseEntity<LocationsDTO> addLocation(@RequestBody LocationsDTO locationDTO) {
         try {
-            Locations savedLocation = locationsService.addLocation(location);
+            LocationsDTO savedLocation = locationsService.addLocation(locationDTO);
             return new ResponseEntity<>(savedLocation, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -27,8 +27,8 @@ public class LocationsController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Locations> updateLocation(@PathVariable Integer id, @RequestBody Locations locationDetails) {
-        Locations updatedLocation = locationsService.updateLocation(id, locationDetails);
+    public ResponseEntity<LocationsDTO> updateLocation(@PathVariable Integer id, @RequestBody LocationsDTO locationDetails) {
+        LocationsDTO updatedLocation = locationsService.updateLocation(id, locationDetails);
         if (updatedLocation != null) {
             return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
         }
@@ -45,36 +45,39 @@ public class LocationsController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Locations> getLocationById(@PathVariable Integer id) {
-        Optional<Locations> location = locationsService.getLocationById(id);
+    public ResponseEntity<LocationsDTO> getLocationById(@PathVariable Integer id) {
+        Optional<LocationsDTO> location = locationsService.getLocationById(id);
         return location.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    
     @GetMapping
-    public ResponseEntity<List<Locations>> getAllLocationsUnpaged() {
-        List<Locations> locations = locationsService.getAllLocations();
+    public ResponseEntity<List<LocationsDTO>> getAllLocationsUnpaged() {
+        List<LocationsDTO> locations = locationsService.getAllLocations();
         return new ResponseEntity<>(locations, HttpStatus.OK);
     }
     
     @GetMapping("/city/{city}")
-    public ResponseEntity<Locations> getLocationByCity(@PathVariable String city) {
+    public ResponseEntity<List<LocationsDTO>> getLocationByCity(@PathVariable String city) {
         try {
-            Optional<Locations> location = locationsService.getLocationByCity(city);
-            return location.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                          .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            List<LocationsDTO> locations = locationsService.getLocationByCity(city);
+            if (locations.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(locations, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
     
     @GetMapping("/country/{country}")
-    public ResponseEntity<Locations> getLocationByCountry(@PathVariable String country) {
+    public ResponseEntity<List<LocationsDTO>> getLocationByCountry(@PathVariable String country) {
         try {
-            Optional<Locations> location = locationsService.getLocationByCountry(country);
-            return location.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                          .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            List<LocationsDTO> locations = locationsService.getLocationByCountry(country);
+            if (locations.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(locations, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

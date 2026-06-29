@@ -1,8 +1,8 @@
 package com.rocket.controller;
 
-import com.rocket.entity.LeadStatus;
-import com.rocket.service.LeadStatusService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rocket.dto.LeadStatusDTO;
+import com.rocket.service.ILeadStatusService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,22 +11,22 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lead-statuses")
+@RequiredArgsConstructor
 public class LeadStatusController {
     
-    @Autowired
-    private LeadStatusService leadStatusService;
+    private final ILeadStatusService leadStatusService;
     
     // Add a new lead status
     @PostMapping
-    public ResponseEntity<LeadStatus> addLeadStatus(@RequestBody LeadStatus leadStatus) {
-        LeadStatus savedStatus = leadStatusService.addLeadStatus(leadStatus);
+    public ResponseEntity<LeadStatusDTO> addLeadStatus(@RequestBody LeadStatusDTO leadStatusDTO) {
+        LeadStatusDTO savedStatus = leadStatusService.addLeadStatus(leadStatusDTO);
         return new ResponseEntity<>(savedStatus, HttpStatus.CREATED);
     }
     
     // Update a lead status
     @PutMapping("/{id}")
-    public ResponseEntity<LeadStatus> updateLeadStatus(@PathVariable Integer id, @RequestBody LeadStatus leadStatusDetails) {
-        LeadStatus updatedStatus = leadStatusService.updateLeadStatus(id, leadStatusDetails);
+    public ResponseEntity<LeadStatusDTO> updateLeadStatus(@PathVariable Integer id, @RequestBody LeadStatusDTO leadStatusDetails) {
+        LeadStatusDTO updatedStatus = leadStatusService.updateLeadStatus(id, leadStatusDetails);
         if (updatedStatus != null) {
             return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
         }
@@ -45,23 +45,23 @@ public class LeadStatusController {
     
     // Get lead status by ID
     @GetMapping("/{id}")
-    public ResponseEntity<LeadStatus> getLeadStatusById(@PathVariable Integer id) {
-        Optional<LeadStatus> status = leadStatusService.getLeadStatusById(id);
+    public ResponseEntity<LeadStatusDTO> getLeadStatusById(@PathVariable Integer id) {
+        Optional<LeadStatusDTO> status = leadStatusService.getLeadStatusById(id);
         return status.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     
     // Get all lead statuses
     @GetMapping
-    public ResponseEntity<List<LeadStatus>> getAllLeadStatuses() {
-        List<LeadStatus> statuses = leadStatusService.getAllLeadStatuses();
+    public ResponseEntity<List<LeadStatusDTO>> getAllLeadStatuses() {
+        List<LeadStatusDTO> statuses = leadStatusService.getAllLeadStatuses();
         return new ResponseEntity<>(statuses, HttpStatus.OK);
     }
     
     // Get lead status by name
     @GetMapping("/name/{statusName}")
-    public ResponseEntity<LeadStatus> getLeadStatusByName(@PathVariable String statusName) {
-        Optional<LeadStatus> status = leadStatusService.getLeadStatusByName(statusName);
+    public ResponseEntity<LeadStatusDTO> getLeadStatusByName(@PathVariable String statusName) {
+        Optional<LeadStatusDTO> status = leadStatusService.getLeadStatusByName(statusName);
         return status.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

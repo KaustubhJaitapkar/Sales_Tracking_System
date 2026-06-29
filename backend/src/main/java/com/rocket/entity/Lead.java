@@ -10,10 +10,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 @Entity
 @Table(name = "leads")
@@ -21,26 +19,32 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Lead {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lead_id")
     private Integer leadId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
+    @NotNull(message = "Customer cannot be null")
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_id", nullable = false)
+    @NotNull(message = "Lead source cannot be null")
     private LeadSource source;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
+    @NotNull(message = "Product cannot be null")
     private ProductDetails product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
+    @NotNull(message = "Created by employee cannot be null")
     private Employee createdBy;
 
     @CreationTimestamp
@@ -51,15 +55,21 @@ public class Lead {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private Boolean isActive = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id", nullable = false)
+    @NotNull(message = "Lead status cannot be null")
     private LeadStatus status;
 
     @Column(name = "description", columnDefinition = "TEXT")
+    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "priority", nullable = false)
+    @NotNull(message = "Priority cannot be null")
     private LeadPriority priority = LeadPriority.Medium;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -67,6 +77,7 @@ public class Lead {
     private Employee assignedTo;
 
     @Column(name = "value", nullable = false)
+    @Min(value = 0, message = "Lead value cannot be negative")
     private Integer value = 0;
 
     @JsonIgnore
